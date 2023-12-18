@@ -1,0 +1,45 @@
+{% extends "main/index.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="align-items-center">
+  <div class="col text-center">
+    {% if user.is_authenticated %}
+    <img src="{{ user.avatar.url }}" alt="Аватар пользователя" class="p-2 bg-light rounded-circle"
+      style="height: 150px; width: 150px; object-fit: cover;">
+    <div class="card-body">
+      <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+      <p class="card-text">
+        {% if user.age %}
+        Возраст: {{ user.age }}
+        {% else %}
+        Возраст не указан
+        {% endif %}
+      </p>
+      <a href="{% url 'main:edit_user' %}" class="">Редактировать профиль</a>
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+      Для просмотра профиля необходимо <a href="{% url 'login' %}" class="alert-link">войти</a> или <a
+        href="{% url 'register' %}" class="alert-link">зарегистрироваться</a>.
+    </div>
+    {% endif %}
+  </div>
+  <div class="col text-center">
+    <a href="#" class="">Создать пост</a>
+    {% if user_posts %}
+    <h3>Ваши посты:</h3>
+    <ul>
+      {% for post in user_posts %}
+      <li>{{ post.text }}</li>
+      {% if post.image %}
+      <img src="{{ post.image.url }}" alt="Post Image">
+      {% endif %}
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>У вас нет постов.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

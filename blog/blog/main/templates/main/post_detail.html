@@ -1,0 +1,91 @@
+{% extends "main/base.html" %}
+{% block title %} TopBlog {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card mb-4">
+
+        <div class="d-flex justify-content-end" style="padding:5px;">
+          <button type="button" class="close" aria-label="Close" onclick="window.history.back()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            {% if post.user.avatar and post.user.avatar.url %}
+            <img src="{{ post.user.avatar.url }}" class="rounded-circle mr-2" alt="user Image"
+              style="width: 40px; height: 40px; object-fit: cover;">
+            {% else %}
+            <div class="rounded-circle mr-2" style="width: 40px; height: 40px; background-color: #e9ecef;"></div>
+            {% endif %}
+            <h6 class="card-title mb-0">{{ post.user.username }}</h6>
+          </div>
+          <p class="text-muted">{{ post.created_at|date:"d.m.y H:i" }}</p>
+        </div>
+
+        <div class="card-body">
+          {% if post.image %}
+          <img src="{{ post.image.url }}" class="card-img-top mb-3" alt="Post Image" style="max-width: 100%; height: auto;">
+          {% endif %}
+          <p class="card-text" style="font-size: 1.8rem;">{{ post.text }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title mb-0">Комментировать</h4>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data" action="{% url 'main:post_detail' post_id=post.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-outline-dark">Комментировать</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="card-title mb-0">Комментарии</h4>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for comment in comments %}
+          <li class="list-group-item">
+            <div class="d-flex align-items-start">
+              <div class="mr-3">
+                {% if comment.user.avatar and comment.user.avatar.url %}
+                <img src="{{ comment.user.avatar.url }}" class="rounded-circle" alt="user Image"
+                  style="width: 30px; height: 30px; object-fit: cover;">
+                {% else %}
+                <div class="rounded-circle" style="width: 30px; height: 30px; background-color: #e9ecef;"></div>
+                {% endif %}
+              </div>
+              <div>
+                <div class="d-flex align-items-center">
+                  <span class="mr-2" style="font-size: 1rem;">{{ comment.user.username }}:</span>
+                  <span>{{ comment.content }}</span>
+                </div>
+                {% if comment.image %}
+                <img src="{{ comment.image.url }}" alt="Comment Image" class="mt-2"
+                  style="max-width: 50%; height: auto;">
+                {% endif %}
+                <p class="text-muted">{{ comment.created_at|date:"d.m.y H:i" }}</p>
+              </div>
+            </div>
+            {% if comment.user == user or comment.post.user == user %}
+            <form method="post" action="{% url 'main:delete_comment' comment.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link text-danger btn-sm mt-2">Удалить</button>
+            </form>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

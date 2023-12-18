@@ -1,0 +1,23 @@
+{% extends "main/index.html" %}
+
+{% load bootstrap4 %}
+
+{% block title %} Правка личных данных {% endblock %}
+
+{% block content %}
+<h2>Правка личных данных пользователя {{ user.username }}</h2>
+<form method="post" enctype="multipart/form-data">
+   {% csrf_token %}
+   {% bootstrap_form form layout='horizontal' %}
+   {% if user.avatar %}
+      <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="delete_avatar" name="delete_avatar">
+          <label class="form-check-label" for="delete_avatar">Удалить текущее фото профиля</label>
+      </div><br>
+   {% endif %}
+   {% buttons submit='Сохранить' %} {% endbuttons %}
+</form>
+<a href="{% url 'main:delete_user' %}" >Удалить аккаунт?</a>
+{% endblock %}
+
+

@@ -1,0 +1,75 @@
+{% extends "main/index.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+  <div class="align-items-center">
+    <div class="col text-center">
+      {% if user.is_authenticated %}
+        {% if user.avatar and user.avatar.url %}
+          <img src="{{ user.avatar.url }}" alt="Аватар пользователя" class="p-2 bg-light rounded-circle"
+            style="height: 150px; width: 150px; object-fit: cover;">
+        {% else %}
+          <img src="/images/default.jpg" alt="Заглушка для аватара" class="p-2 bg-light rounded-circle"
+            style="height: 150px; width: 150px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+          <p class="card-text">
+            {% if user.age %}
+              Возраст: {{ user.age }}
+            {% else %}
+              Возраст не указан
+            {% endif %}
+          </p>
+          <a href="{% url 'main:edit_user' %}" class="">Редактировать профиль</a>
+        </div>
+      {% else %}
+        <div class="alert alert-warning" role="alert">
+          Для просмотра профиля необходимо <a href="{% url 'login' %}" class="alert-link">войти</a> или <a
+            href="{% url 'register' %}" class="alert-link">зарегистрироваться</a>.
+        </div>
+      {% endif %}
+    </div>
+    <div class="col">
+      <div class="text-center">
+        <a href="{% url 'main:create-post' %}" class="btn btn-primary">Создать пост</a>
+      </div>
+      <div class="card-columns" style="margin-top: 15px;">
+        {% if user_posts %}
+          {% for post in user_posts %}
+            <div class="card mb-3">
+              <a href="{% url 'main:post_detail' post_id=post.id %}" class="text-decoration-none text-dark">
+                <div class="d-flex align-items-center" style="padding: 10px">
+                  {% if post.user.avatar %}
+                    <img src="{{ post.user.avatar.url }}" class="rounded-circle mr-2" alt="Author Avatar"
+                      style="width: 30px; height: 30px; object-fit: cover;">
+                  {% else %}
+                    <img src="/images/default.jpg" class="rounded-circle mr-2" alt="Default Avatar"
+                      style="width: 30px; height: 30px; object-fit: cover;">
+                  {% endif %}
+                  <h6 class="card-title">{{ post.user.username }}</h6>
+                </div>
+                {% if post.image %}
+                  <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+                {% endif %}
+                <div class="card-body">
+                  <p class="card-text">{{ post.text }}</p>
+                  <small class="text-muted">{{ post.created_at|date:"d.m.y H:i" }}</small>
+                </div>
+                <div class="text-center" style="padding: 10px">
+                  <a class="btn btn-outline-dark" href="{% url 'main:delete-post' post.id %}">Удалить</a>
+                  <a class="btn btn-outline-dark" href="{% url 'main:edit-post' post.id %}">Редактировать</a>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center">
+            <p>У вас нет постов.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

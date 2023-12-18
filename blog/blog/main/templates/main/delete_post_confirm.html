@@ -1,0 +1,14 @@
+{% extends "main/index.html" %}
+
+{% block content %}
+  <h2>Вы уверены, что хотите удалить этот пост?</h2>
+  <p>{{ object.text }}</p>
+  {% if object.image %}
+    <img src="{{ object.image.url }}" alt="Post Image">
+  {% endif %}
+  <form method="post" action="{% url 'main:delete-post' object.id %}">
+    {% csrf_token %}
+    <button type="submit">Удалить</button>
+  </form>
+  <a href="{% url 'main:profile' %}">Отмена</a>
+{% endblock %}
